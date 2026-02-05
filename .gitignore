@@ -1,0 +1,12 @@
+# Frontend (React)
+ems-frontend/node_modules/
+ems-frontend/.env
+
+# Backend (Spring Boot)
+ems-backend/target/
+ems-backend/.idea/
+ems-backend/.env
+
+# Common
+.vscode/
+.DS_Store
