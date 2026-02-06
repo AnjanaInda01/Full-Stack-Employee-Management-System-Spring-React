@@ -1,6 +1,10 @@
-import React, { useState } from "react";
-import { createEmployee } from "../services/EmployeeService";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  createEmployee,
+  getEmployee,
+  updateEmployee,
+} from "../services/EmployeeService";
+import { useNavigate, useParams } from "react-router-dom";
 
 const isGmail = (email) => {
   return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
@@ -19,6 +23,19 @@ function EmployeeComponent() {
     isGmail(employee.email);
 
   const navigator = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      getEmployee(id)
+        .then((response) => {
+          setEmployee(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [id]);
 
   const [submitted, setSubmitted] = useState(false);
 
@@ -27,7 +44,7 @@ function EmployeeComponent() {
     setEmployee({ ...employee, [name]: value });
   };
 
-  function saveEmployee(e) {
+  function saveOrUpdateEmployee(e) {
     e.preventDefault();
     setSubmitted(true);
 
@@ -35,25 +52,44 @@ function EmployeeComponent() {
       return;
     }
 
-    createEmployee(employee)
-      .then(() => {
-        alert("Employee added successfully!");
-        navigator("/employees");
-      })
-      .catch(() => {
-        alert("Failed to add employee.");
-      });
+    // 2️⃣ Update if editing
+    if (id) {
+      updateEmployee(id, employee)
+        .then(() => {
+          alert("Employee updated successfully!");
+          navigator("/employees");
+        })
+        .catch(() => {
+          alert("Failed to update employee.");
+        });
+      return; // Important: exit function
+    } else {
+      createEmployee(employee)
+        .then(() => {
+          alert("Employee added successfully!");
+          navigator("/employees");
+        })
+        .catch(() => {
+          alert("Failed to add employee.");
+        });
+    }
+  }
+
+  function pageTitle() {
+    if (id) {
+      return <h5 className="mb-0 text-center">Update Employee</h5>;
+    } else {
+      return <h5 className="mb-0 text-center">Add New Employee</h5>;
+    }
   }
 
   return (
     <div className="container mt-4">
       <div className="card shadow-sm mx-auto" style={{ maxWidth: "500px" }}>
-        <div className="card-header bg-primary text-white">
-          <h5 className="mb-0 text-center">Add New Employee</h5>
-        </div>
+        <div className="card-header bg-primary text-white">{pageTitle()}</div>
 
         <div className="card-body">
-          <form onSubmit={saveEmployee}>
+          <form onSubmit={saveOrUpdateEmployee}>
             {/* First Name */}
             <div className="mb-3">
               <label htmlFor="firstName" className="form-label">
@@ -84,7 +120,7 @@ function EmployeeComponent() {
                 type="text"
                 className={`form-control ${
                   submitted
-                    ? isGmail(employee.lastName)
+                    ? employee.lastName
                       ? "is-valid"
                       : "is-invalid"
                     : ""
@@ -122,10 +158,7 @@ function EmployeeComponent() {
 
             {/* Buttons */}
             <div className="d-flex justify-content-between">
-              <button
-                type="submit"
-                className="btn btn-success"
-              >
+              <button type="submit" className="btn btn-success">
                 Save
               </button>
               <button

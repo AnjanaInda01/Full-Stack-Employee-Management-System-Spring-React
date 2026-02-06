@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listEmployee } from "../services/EmployeeService";
+import { listEmployee, deleteEmployee } from "../services/EmployeeService";
 import { useNavigate } from "react-router-dom";
 
 function ListEmployeeComponent() {
@@ -14,6 +14,25 @@ function ListEmployeeComponent() {
 
   function addNewEmployee() {
     navigate("/add-employee");
+  }
+
+  function updateEmployee(id) {
+    navigate(`/edit-employee/${id}`);
+  }
+
+  function handleDeleteEmployee(id) {
+    if (window.confirm("Are you sure you want to delete this employee?")) {
+      deleteEmployee(id)
+        .then(() => {
+          alert("Employee deleted successfully!");
+          // Refresh the list after deletion
+          setEmployees(employees.filter((emp) => emp.id !== id));
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("Failed to delete employee.");
+        });
+    }
   }
 
   return (
@@ -53,10 +72,13 @@ function ListEmployeeComponent() {
                       <td>{emp.lastName}</td>
                       <td>{emp.email}</td>
                       <td className="text-center">
-                        <button className="btn btn-sm btn-primary me-2 mb-1">
-                          Edit
+                        <button
+                          className="btn btn-sm btn-primary me-2 mb-1"
+                          onClick={() => updateEmployee(emp.id)}
+                        >
+                          Update
                         </button>
-                        <button className="btn btn-sm btn-danger mb-1">
+                        <button className="btn btn-sm btn-danger mb-1" onClick={() => handleDeleteEmployee(emp.id)}>
                           Delete
                         </button>
                       </td>
