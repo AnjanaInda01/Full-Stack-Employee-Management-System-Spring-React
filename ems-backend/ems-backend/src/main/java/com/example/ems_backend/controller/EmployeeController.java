@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1/employees")
@@ -18,7 +19,7 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     //Build add employee REST API
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<EmployeeDto> createdEmployee(@RequestBody EmployeeDto employeeDto){
         EmployeeDto savedEmployee =  employeeService.createEmployee(employeeDto);
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
@@ -32,7 +33,7 @@ public class EmployeeController {
     }
 
     //Build Get All Employees REST API
-    @GetMapping("/getAll")
+    @GetMapping
     public ResponseEntity<List<EmployeeDto>> getAllEmployees(){
         List<EmployeeDto> employees =  employeeService.getAllEmployees();
         return ResponseEntity.ok(employees);
