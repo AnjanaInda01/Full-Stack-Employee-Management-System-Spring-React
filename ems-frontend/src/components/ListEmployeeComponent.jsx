@@ -38,7 +38,7 @@ function ListEmployeeComponent() {
                   <tr key={employee.id}>
                     <td>{employee.id}</td>
                     <td>{employee.firstName}</td>
-                    <td>{employee.lastname}</td>
+                    <td>{employee.lastName}</td>
                     <td>{employee.email}</td>
                     <td className="text-center">
                       <button className="btn btn-sm btn-primary me-2">
