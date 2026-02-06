@@ -1,32 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { listEmployee } from "../services/EmployeeService";
 
 function ListEmployeeComponent() {
-  const dummyData = [
-    {
-      id: 1,
-      firstName: "Anjana",
-      lastname: "Induranga",
-      email: "anjanainduranga@gmail.com",
-    },
-    {
-      id: 2,
-      firstName: "Malindu",
-      lastname: "Hasaranga",
-      email: "malinduhasaranga@gmail.com",
-    },
-    {
-      id: 3,
-      firstName: "Nimal",
-      lastname: "Jayasuriya",
-      email: "nimaljayasuriya@gmail.com",
-    },
-    {
-      id: 4,
-      firstName: "Oshada",
-      lastname: "Nethmina",
-      email: "oshadanethmina@gmail.com",
-    },
-  ];
+  const [employees, setEmployees]= useState([]);
+
+  useEffect(()=>{
+    listEmployee().then((response)=>{
+        setEmployees(response.data);
+    }).catch(error=>{
+        console.error(error);
+    })
+
+  },[])
 
   return (
     <div className="container mt-4">
@@ -49,7 +34,7 @@ function ListEmployeeComponent() {
               </thead>
 
               <tbody>
-                {dummyData.map((employee) => (
+                {employees.map((employee) => (
                   <tr key={employee.id}>
                     <td>{employee.id}</td>
                     <td>{employee.firstName}</td>
@@ -68,7 +53,7 @@ function ListEmployeeComponent() {
               </tbody>
             </table>
 
-            {dummyData.length === 0 && (
+            {employees.length === 0 && (
               <p className="text-center text-muted">No employees found</p>
             )}
           </div>
