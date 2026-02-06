@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { listEmployee } from "../services/EmployeeService";
+import { useNavigate } from "react-router-dom";
 
 function ListEmployeeComponent() {
-  const [employees, setEmployees]= useState([]);
+  const [employees, setEmployees] = useState([]);
+  const navigate = useNavigate();
 
-  useEffect(()=>{
-    listEmployee().then((response)=>{
-        setEmployees(response.data);
-    }).catch(error=>{
-        console.error(error);
-    })
+  useEffect(() => {
+    listEmployee()
+      .then((response) => setEmployees(response.data))
+      .catch((error) => console.error(error));
+  }, []);
 
-  },[])
+  function addNewEmployee() {
+    navigate("/add-employee");
+  }
 
   return (
     <div className="container mt-4">
       <div className="card shadow-sm">
-        <div className="card-header bg-dark text-white">
+        {/* Card Header */}
+        <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center flex-wrap">
           <h5 className="mb-0">Employee List</h5>
+          <button
+            className="btn btn-sm btn-success mt-2 mt-sm-0"
+            onClick={addNewEmployee}
+          >
+            + Add Employee
+          </button>
         </div>
 
-        <div className="card-body">
+        {/* Card Body */}
+        <div className="card-body p-0">
           <div className="table-responsive">
-            <table className="table table-hover table-striped align-middle">
+            <table className="table table-hover table-striped align-middle mb-0">
               <thead className="table-dark">
                 <tr>
                   <th>ID</th>
@@ -34,28 +45,32 @@ function ListEmployeeComponent() {
               </thead>
 
               <tbody>
-                {employees.map((employee) => (
-                  <tr key={employee.id}>
-                    <td>{employee.id}</td>
-                    <td>{employee.firstName}</td>
-                    <td>{employee.lastName}</td>
-                    <td>{employee.email}</td>
-                    <td className="text-center">
-                      <button className="btn btn-sm btn-primary me-2">
-                        Edit
-                      </button>
-                      <button className="btn btn-sm btn-danger">
-                        Delete
-                      </button>
+                {employees.length > 0 ? (
+                  employees.map((emp) => (
+                    <tr key={emp.id}>
+                      <td>{emp.id}</td>
+                      <td>{emp.firstName}</td>
+                      <td>{emp.lastName}</td>
+                      <td>{emp.email}</td>
+                      <td className="text-center">
+                        <button className="btn btn-sm btn-primary me-2 mb-1">
+                          Edit
+                        </button>
+                        <button className="btn btn-sm btn-danger mb-1">
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center text-muted py-3">
+                      No employees found
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
-
-            {employees.length === 0 && (
-              <p className="text-center text-muted">No employees found</p>
-            )}
           </div>
         </div>
       </div>
