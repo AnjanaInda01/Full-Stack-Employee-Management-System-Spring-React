@@ -2,6 +2,7 @@ import React from 'react'
 
 export default function NaveBar() {
   return (
-    <div>NaveBar</div>
+    <h1 className='text-center'>NaveBar</h1>
   )
 }
+ 
